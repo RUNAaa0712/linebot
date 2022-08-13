@@ -85,7 +85,8 @@ app.post("/webhook", function(req, res) {
   //tweetする
   if (req.body.events[0].type === "message") {
     message_text = req.body.events[0].message.text
-    tweet(message_text)
+    msg_list = message_text.split(",")
+    tweet(msg_list)
   }
 })
 
@@ -94,14 +95,7 @@ app.listen(PORT, () => {
 })
 
 function tweet( text ) {
-  var nowTime = new Date();
-  let nowHour = nowTime.getHours().toString();
-  let nowMin  = nowTime.getMinutes().toString();
-  if(nowMin.length==1) nowMin = '0'+nowMin;
-  let nowSec  = nowTime.getSeconds().toString();
-  if(nowSec.length==1) nowSec = '0'+nowSec;
-  let msg = nowHour + ":" + nowMin + ":" + nowSec;
-  const postContent = msg + "の投稿:" +text;
+  const postContent = text[0] + "\n" + text[1];
   const params = { status: postContent };
   twitter.post('statuses/update', params,  (error, tweet, response) => {
 

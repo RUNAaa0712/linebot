@@ -85,7 +85,7 @@ app.post("/webhook", function(req, res) {
   //tweetする
   if (req.body.events[0].type === "message") {
     message_text = req.body.events[0].message.text
-    msg_list = message_text.split(",")
+    msg_list = message_text.split(/[,、]/)
     tweet(msg_list)
   }
 })

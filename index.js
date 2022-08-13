@@ -112,7 +112,7 @@ function tweet( message_text, msg_list, time ) {
   // 空白ではなく配列が1の場合の処理
   else if( msg_list.length == 1 ) {
     postContent = msg_list.toString()
-    postContent += "\n" + time
+    postContent += "\n\n" + time
     postflg = true
     console.log( "配列1の時の処理", postContent )
   }
@@ -122,7 +122,7 @@ function tweet( message_text, msg_list, time ) {
     for( let n = 0; n < msg_list.length; n++ ) {
       postContent += msg_list[n] + "\n"
     }
-    postContent += "\n" + time
+    postContent += "\n\n" + time
     postflg = true
     console.log( "配列2の時の処理", postContent )
   }

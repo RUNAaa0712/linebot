@@ -7,17 +7,17 @@ const export_func = require("./export.js")
 
 const PORT = process.env.PORT || 3000
 const TOKEN = process.env.LINE_ACCESS_TOKEN
-
-const TWITTER_CONSUMER_KEY = 'vbCWsaUENeh8WugyHaurczTRp';
-const TWITTER_CONSUMER_SECRET = 'IoIV88SW4hCPzHnGVvfiKjlMcwDDxBEH0sB32H9gZJpFhQWrwj';
-const TWITTER_ACCESS_TOKEN = '1396302235315838976-vr7NtexaQ9vWufsSgStukc5W8EJr0V';
-const TWITTER_ACCESS_TOKEN_SECRET = 'PwiWOynyrS4lCORW1mJ4iC6H51ytA2oeqSZiMcdAvUdWY';
+const linenotifytoken = process.env.LINENotifyTOKEN
+// const TWITTER_CONSUMER_KEY = 'vbCWsaUENeh8WugyHaurczTRp';
+// const TWITTER_CONSUMER_SECRET = 'IoIV88SW4hCPzHnGVvfiKjlMcwDDxBEH0sB32H9gZJpFhQWrwj';
+// const TWITTER_ACCESS_TOKEN = '1396302235315838976-vr7NtexaQ9vWufsSgStukc5W8EJr0V';
+// const TWITTER_ACCESS_TOKEN_SECRET = 'PwiWOynyrS4lCORW1mJ4iC6H51ytA2oeqSZiMcdAvUdWY';
 
 const twitter = new Twitter({
-  consumer_key: TWITTER_CONSUMER_KEY,
-  consumer_secret: TWITTER_CONSUMER_SECRET,
-  access_token_key: TWITTER_ACCESS_TOKEN,
-  access_token_secret: TWITTER_ACCESS_TOKEN_SECRET
+  consumer_key: process.env.TWITTER_CONSUMER_KEY,
+  consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
+  access_token_key: process.env.TWITTER_ACCESS_TOKEN,
+  access_token_secret: process.env.TWITTER_ACCESS_TOKEN_SECRET
 });
 
 
@@ -28,7 +28,6 @@ app.use(express.urlencoded({
 
 app.get("/", (req, res) => {
   res.sendStatus(200)
-  // res.send(export_func.deal_with("aaaa"))
 })
 
 app.post("/webhook", function(req, res) {
@@ -90,11 +89,11 @@ app.post("/webhook", function(req, res) {
     if(nowMin.length==1) nowMin = '0'+nowMin;
     let nowSec  = nowTime.getSeconds().toString();
     if(nowSec.length==1) nowSec = '0'+nowSec;
-    let msg = nowHour + ":" + nowMin + ":" + nowSec;
+    let time = nowHour + ":" + nowMin + ":" + nowSec;
     
     message_text = req.body.events[0].message.text
     msg_list = message_text.split(/[,、]/)
-    tweet(msg_list,msg)
+    tweet( message_text, msg_list, time )
   }
 })
 
@@ -102,10 +101,34 @@ app.listen(PORT, () => {
   console.log(`Example app listening at http://localhost:${PORT}`)
 })
 
-function tweet( text, time ) {
-  const postContent = text[0] + "\n" + text[1] +"\n\n" + time;
+function tweet( message_text, msg_list, time ) {
+  let postContent = "";
+  postflg = false
+  //空白じゃない場合の処理
+  if( message_text == "" ) {
+    console.log( "空白の時の処理" )
+  }
+
+  // 空白ではなく配列が1の場合の処理
+  else if( msg_list.length == 1 ) {
+    postContent = msg_list.toString()
+    postContent += "\n" + time
+    postflg = true
+    console.log( "配列1の時の処理", postContent )
+  }
+
+  // 配列が2以上の時の処理
+  else if( msg_list.length >= 2 ) {
+    for( let n = 0; n < msg_list.length; n++ ) {
+      postContent += msg_list[n] + "\n"
+    }
+    postContent += "\n" + time
+    postflg = true
+    console.log( "配列2の時の処理", postContent )
+  }
+  
   const params = { status: postContent };
-  twitter.post('statuses/update', params,  (error, tweet, response) => {
+  if( postflg ) twitter.post('statuses/update', params,  (error, tweet, response) => {
 
     if(error) {
 

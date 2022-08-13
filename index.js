@@ -94,7 +94,14 @@ app.listen(PORT, () => {
 })
 
 function tweet( text ) {
-  const postContent = text;
+  var nowTime = new Date();
+  let nowHour = nowTime.getHours().toString();
+  let nowMin  = nowTime.getMinutes().toString();
+  if(nowMin.length==1) nowMin = '0'+nowMin;
+  let nowSec  = nowTime.getSeconds().toString();
+  if(nowSec.length==1) nowSec = '0'+nowSec;
+  let msg = nowHour + ":" + nowMin + ":" + nowSec;
+  const postContent = msg + "の投稿:" +text;
   const params = { status: postContent };
   twitter.post('statuses/update', params,  (error, tweet, response) => {
 

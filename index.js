@@ -84,9 +84,17 @@ app.post("/webhook", function(req, res) {
 
   //tweetする
   if (req.body.events[0].type === "message") {
+    var nowTime = new Date();
+    let nowHour = nowTime.getHours().toString();
+    let nowMin  = nowTime.getMinutes().toString();
+    if(nowMin.length==1) nowMin = '0'+nowMin;
+    let nowSec  = nowTime.getSeconds().toString();
+    if(nowSec.length==1) nowSec = '0'+nowSec;
+    let msg = nowHour + ":" + nowMin + ":" + nowSec;
+    
     message_text = req.body.events[0].message.text
     msg_list = message_text.split(/[,、]/)
-    tweet(msg_list)
+    tweet(msg_list,msg)
   }
 })
 
@@ -94,8 +102,8 @@ app.listen(PORT, () => {
   console.log(`Example app listening at http://localhost:${PORT}`)
 })
 
-function tweet( text ) {
-  const postContent = text[0] + "\n" + text[1];
+function tweet( text, time ) {
+  const postContent = text[0] + "\n" + text[1] +"\n\n" + time;
   const params = { status: postContent };
   twitter.post('statuses/update', params,  (error, tweet, response) => {
 

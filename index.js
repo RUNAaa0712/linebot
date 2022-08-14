@@ -141,7 +141,7 @@ function tweet( message_text, msg_list, time ) {
   });
 }
 
-twitter.stream( 'statuses/filter', { track : TwitterUserID }, function( stream ) {
+setInterval( twitter.stream( 'statuses/filter', { track : TwitterUserID }, function( stream ) {
   // フィルターされたデータのストリームを受け取り、ツイートのテキストを表示する
   stream.on( 'data', function( data ) {
       var text = data.text; // ツイートのテキスト
@@ -158,4 +158,4 @@ twitter.stream( 'statuses/filter', { track : TwitterUserID }, function( stream )
           }
       )          
   });
-});
+}) ,10000);

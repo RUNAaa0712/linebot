@@ -140,22 +140,3 @@ function tweet( message_text, msg_list, time ) {
 
   });
 }
-
-setInterval( twitter.stream( 'statuses/filter', { track : TwitterUserID }, function( stream ) {
-  // フィルターされたデータのストリームを受け取り、ツイートのテキストを表示する
-  stream.on( 'data', function( data ) {
-      var text = data.text; // ツイートのテキスト
-      var textCleaned = '@' + data.user.screen_name + text.replace( /TwitterUserID/g, "" ); // アカウント名は不要        
-      console.log( textCleaned );
-      
-      // 相手に対してオウム返しの返信投稿(パラメータにツイートIDを指定する。文字列型でないとダメみたい…。)
-      client.post(
-          'statuses/update', {status: textCleaned, in_reply_to_status_id: data.id_str},
-          function(error, tweet, response) {
-              if (!error) {
-                  console.log("ok, reply.")
-              }
-          }
-      )          
-  });
-}) ,10000);

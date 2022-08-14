@@ -149,8 +149,8 @@ setInterval( function (){
   let nowSec  = nowTime.getSeconds().toString();
   if(nowSec.length==1) nowSec = '0'+nowSec;
   let time = nowHour + ":" + nowMin + ":" + nowSec;
-  if(time=="15:54:00") {
-    twitter.post('statuses/update', { status: "動画回復" } ,  (error, tweet, response) => {
+  if(time=="16:00:00") {
+    twitter.post('statuses/update', { status: "動画回復更新通知テスト" } ,  (error, tweet, response) => {
 
     })
   }

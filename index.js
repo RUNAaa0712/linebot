@@ -7,11 +7,9 @@ const export_func = require("./export.js")
 
 const PORT = process.env.PORT || 3000
 const TOKEN = process.env.LINE_ACCESS_TOKEN
+// LINENotifyに通知するトークン/
 const linenotifytoken = process.env.LINENotifyTOKEN
-// const TWITTER_CONSUMER_KEY = 'vbCWsaUENeh8WugyHaurczTRp';
-// const TWITTER_CONSUMER_SECRET = 'IoIV88SW4hCPzHnGVvfiKjlMcwDDxBEH0sB32H9gZJpFhQWrwj';
-// const TWITTER_ACCESS_TOKEN = '1396302235315838976-vr7NtexaQ9vWufsSgStukc5W8EJr0V';
-// const TWITTER_ACCESS_TOKEN_SECRET = 'PwiWOynyrS4lCORW1mJ4iC6H51ytA2oeqSZiMcdAvUdWY';
+const TwitterUserID = "1396302235315838976" // @jidouurasyura
 
 const twitter = new Twitter({
   consumer_key: process.env.TWITTER_CONSUMER_KEY,
@@ -142,3 +140,22 @@ function tweet( message_text, msg_list, time ) {
 
   });
 }
+
+twitter.stream( 'statuses/filter', { track : TwitterUserID }, function( stream ) {
+  // フィルターされたデータのストリームを受け取り、ツイートのテキストを表示する
+  stream.on( 'data', function( data ) {
+      var text = data.text; // ツイートのテキスト
+      var textCleaned = '@' + data.user.screen_name + text.replace( /TwitterUserID/g, "" ); // アカウント名は不要        
+      console.log( textCleaned );
+      
+      // 相手に対してオウム返しの返信投稿(パラメータにツイートIDを指定する。文字列型でないとダメみたい…。)
+      client.post(
+          'statuses/update', {status: textCleaned, in_reply_to_status_id: data.id_str},
+          function(error, tweet, response) {
+              if (!error) {
+                  console.log("ok, reply.")
+              }
+          }
+      )          
+  });
+});

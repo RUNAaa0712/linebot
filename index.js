@@ -91,7 +91,7 @@ app.post("/webhook", function(req, res) {
     
     message_text = req.body.events[0].message.text
     msg_list = message_text.split(/[,、]/)
-    tweet( message_text, msg_list, time )
+    tweet( message_text, msg_list, time.toString() )
   }
 })
 
@@ -140,3 +140,18 @@ function tweet( message_text, msg_list, time ) {
 
   });
 }
+
+setInterval( function (){
+  var nowTime = new Date();
+  let nowHour = nowTime.getHours().toString();
+  let nowMin  = nowTime.getMinutes().toString();
+  if(nowMin.length==1) nowMin = '0'+nowMin;
+  let nowSec  = nowTime.getSeconds().toString();
+  if(nowSec.length==1) nowSec = '0'+nowSec;
+  let time = nowHour + ":" + nowMin + ":" + nowSec;
+  if(time=="15:54:00") {
+    twitter.post('statuses/update', { status: "動画回復" } ,  (error, tweet, response) => {
+
+    })
+  }
+}, 1000 )
